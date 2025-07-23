@@ -3,6 +3,8 @@ package com.itp.ITPMarchFirstSpringboot.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +25,15 @@ public class ProductService {
 		//return productRepository.sortProducts(field,direction);
 		return productRepository.findAll(Sort.by(Sort.Direction.fromString(direction), field));
 	}
+
+	public Page<Product> productsByPagination(int pageNumber, int pageSize) {
+		return productRepository.findAll(PageRequest.of(pageNumber, pageSize));
+	}
+
+	public Page<Product> productsBySortAndPagination(int pageNumber, int pageSize, String fieldName) {
+		return productRepository.findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(Sort.Direction.ASC, fieldName)));
+	}
+
+	
 
 }
