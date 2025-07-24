@@ -1,6 +1,7 @@
 package com.itp.ITPMarchFirstSpringboot.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +35,38 @@ public class ProductService {
 		return productRepository.findAll(PageRequest.of(pageNumber, pageSize).withSort(Sort.by(Sort.Direction.ASC, fieldName)));
 	}
 
+	public void deleteProduct(int prodId) {
+		productRepository.deleteById(prodId);
+		
+	}
+
+	public List<Product> allProducts() {
+		return productRepository.findAll();
+	}
+	
+	public Product getSingleProduct(int prodId) {
+		Product product=null;
+		Optional<Product> optionalProductBox=productRepository.findById(prodId);
+		if(optionalProductBox.isPresent())
+			product=optionalProductBox.get();
+		
+		return product;
+	}
+
+	public Product updateProduct(int prodId, Product newValues) {
+		Product prodFromDB=getSingleProduct(prodId);
+		if(newValues.getCategory()!=null)
+		prodFromDB.setCategory(newValues.getCategory());
+		
+		prodFromDB.setDescription(newValues.getDescription());
+		prodFromDB.setImage(newValues.getImage());
+		prodFromDB.setPrice(newValues.getPrice());
+		prodFromDB.setRating(newValues.getRating());
+		prodFromDB.setTitle(newValues.getTitle());
+		return productRepository.save(prodFromDB);
+	}
+
+	
 	
 
 }
