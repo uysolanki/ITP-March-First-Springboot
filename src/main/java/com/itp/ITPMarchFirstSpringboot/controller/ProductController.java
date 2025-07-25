@@ -68,4 +68,13 @@ public class ProductController {
 	{
 		return productService.updateProduct(prodId,newValues);
 	}
+	
+	@GetMapping("/calTimeFromLastModify/{prodId}")
+	public String calTimeFromLastModify(@PathVariable int prodId)
+	{
+		long days= productService.calTimeFromLastModify(prodId);
+		return "Last Modified was before " + days + " days. ";
+	}
+	
+	
 }

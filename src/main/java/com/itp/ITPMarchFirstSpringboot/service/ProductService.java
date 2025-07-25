@@ -1,5 +1,7 @@
 package com.itp.ITPMarchFirstSpringboot.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +51,6 @@ public class ProductService {
 		Optional<Product> optionalProductBox=productRepository.findById(prodId);
 		if(optionalProductBox.isPresent())
 			product=optionalProductBox.get();
-		
 		return product;
 	}
 
@@ -64,6 +65,17 @@ public class ProductService {
 		prodFromDB.setRating(newValues.getRating());
 		prodFromDB.setTitle(newValues.getTitle());
 		return productRepository.save(prodFromDB);
+	}
+
+	public long calTimeFromLastModify(int prodId) {
+		Product prodFromDB=getSingleProduct(prodId);
+		LocalDateTime productModifiedDateFromDb=prodFromDB.getModifiedAt();
+		LocalDateTime currentDataTime=LocalDateTime.now();
+		Duration duration = Duration.between(productModifiedDateFromDb, currentDataTime);
+		
+		long days = duration.toDays();
+		return days;
+		
 	}
 
 	
