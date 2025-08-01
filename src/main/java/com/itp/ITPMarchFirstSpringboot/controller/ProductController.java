@@ -1,9 +1,16 @@
 package com.itp.ITPMarchFirstSpringboot.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.itp.ITPMarchFirstSpringboot.entity.Product;
 import com.itp.ITPMarchFirstSpringboot.service.ProductService;
+import com.itp.ITPMarchFirstSpringboot.util.APIError;
 
 @RestController
 public class ProductController {
@@ -22,9 +30,25 @@ public class ProductController {
 	ProductService productService;
 	
 	@PostMapping("/loadMultipleProducts")
-	public List<Product> loadMultipleProducts(@RequestBody List<Product> products)
+	public ResponseEntity<List<Product>> loadMultipleProducts(@RequestBody List<Product> products)
 	{
-		return productService.loadMultipleProducts(products);
+		return new ResponseEntity<List<Product>>(productService.loadMultipleProducts(products), HttpStatus.CREATED);
+	}
+	
+	@PostMapping("/addSingleProduct")
+	public ResponseEntity<?> addSingleProduct(@RequestBody @Valid Product product, BindingResult bindingResult)
+	{
+		if (bindingResult.hasErrors()) 
+		{
+			List<APIError> errors = new ArrayList<>();
+			 for (FieldError error : bindingResult.getFieldErrors()) 
+				{
+					APIError apiError = new APIError(error.getDefaultMessage(), error.getField(), error.getRejectedValue());
+			           errors.add(apiError);
+			    }
+			 return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<>(productService.addSingleProduct(product),HttpStatus.CREATED);
 	}
 	@GetMapping("/allProducts")
 	public List<Product> allProducts()

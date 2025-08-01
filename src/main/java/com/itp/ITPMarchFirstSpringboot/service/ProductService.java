@@ -78,6 +78,10 @@ public class ProductService {
 		
 	}
 
+	public Product addSingleProduct(Product product) {
+		return productRepository.save(product);
+	}
+
 	
 	
 
